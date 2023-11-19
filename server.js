@@ -110,6 +110,45 @@ app.post("/api/workouts", upload.single("img"), (req, res) => {
     res.send(workout);
 });
 
+app.put("/api/workouts/:id", upload.single("img"), (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const workout = workouts.find((r) => r._id === id);;
+
+    const result = validateWorkout(req.body);
+
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+
+    workout.name = req.body.name;
+    workout.description = req.body.description;
+    workout.ingredients = req.body.ingredients.split(",");
+
+    if (req.file) {
+        recipe.img = "images/" + req.file.filename;
+    }
+
+    res.send(workout);
+});
+
+app.delete("/api/workouts/:id", upload.single("img"), (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const workout = workouts.find((r) => r._id === id);
+
+    if (!workout) {
+        res.status(404).send("The recipe was not found");
+        return;
+    }
+
+    const index = workouts.indexOf(workout);
+    workouts.splice(index, 1);
+    res.send(workout);
+
+});
+
 const validateWorkout = (workout) => {
     const schema = Joi.object({
         _id: Joi.allow(""),

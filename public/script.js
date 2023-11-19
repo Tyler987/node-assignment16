@@ -69,14 +69,97 @@ const displayDetails = (workout) => {
 
     dLink.onclick = (e) => {
         e.preventDefault();
+        deleteWorkout(workout);
     };
 
-    populateEditForm(workout);
+    populateEditForm(workout);//new
 };
+//new
+const deleteWorkout = async(workout) => {
+    let response = await fetch(`/api/workouts/${workout._id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json;charset=utf-8"
+        }
+    });
 
-const populateEditForm = (workout) => {};
+    if (response.status != 200) {
+        console.log("error deleting");
+        return;
+    }
 
+    let result = await response.json();
+    showWorkouts();
+    document.getElementById("workout-details").innerHTML = "";
+    resetForm();
+}
+//new
+const populateEditForm = (workout) => {
+    const form = document.getElementById("add-edit-workout-form");
+    form._id.value = workout._id;
+    form.name.value = workout.name;
+    form.description.value = workout.description;
+    populateExercises(workout.exercises);
+
+};
+//new
+const populateExercises = (exercises) => {
+    const section = document.getElementById("exercise-boxes");
+    exercises.forEach((exercise) => {
+    //workout.exercises.forEach((exercise) => {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = exercise;
+        section.append(input);
+    });
+};
+//new
 const addEditWorkout = async(e) => {
+    e.preventDefault();
+    const form = document.getElementById("add-edit-workout-form");
+    const formData = new FormData(form);
+    formData.delete("img");
+    //let response;
+    formData.append("exercises", getExercises());
+    let response;
+    //trying to add a new recipe
+    if (form._id.value == -1) {
+        formData.delete("_id");
+
+        response = await fetch("/api/workouts", {
+            method: "POST",
+            body: formData
+        });
+    }
+    //edit an existing recipe
+    else {
+
+        console.log(...formData);
+
+        response = await fetch(`/api/workouts/${form._id.value}`, {
+            method: "PUT",
+            body: formData
+        });
+    }
+
+    //successfully got data from server
+    if (response.status != 200) {
+        console.log("Error posting data");
+        return;
+    }
+    //new
+
+    workout = await response.json();
+
+    if (form._id.value != -1) {
+        displayDetails(workout);
+    }
+
+    document.querySelector(".dialog").classList.add("transparent");
+    resetForm();
+    showWorkouts();
+};
+/*const addEditWorkout = async(e) => {
     e.preventDefault();
     const form = document.getElementById("add-edit-workout-form");
     const formData = new FormData(form);
@@ -114,7 +197,7 @@ const addEditWorkout = async(e) => {
     showWorkouts();
 
 
-};
+};*/
 
 const getExercises = () => {
     const inputs = document.querySelectorAll("#exercise-boxes input");
