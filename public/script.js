@@ -72,9 +72,8 @@ const displayDetails = (workout) => {
         deleteWorkout(workout);
     };
 
-    populateEditForm(workout);//new
+    populateEditForm(workout);
 };
-//new
 const deleteWorkout = async(workout) => {
     let response = await fetch(`/api/workouts/${workout._id}`, {
         method: "DELETE",
@@ -93,7 +92,6 @@ const deleteWorkout = async(workout) => {
     document.getElementById("workout-details").innerHTML = "";
     resetForm();
 }
-//new
 const populateEditForm = (workout) => {
     const form = document.getElementById("add-edit-workout-form");
     form._id.value = workout._id;
@@ -102,27 +100,22 @@ const populateEditForm = (workout) => {
     populateExercises(workout.exercises);
 
 };
-//new
 const populateExercises = (exercises) => {
     const section = document.getElementById("exercise-boxes");
     exercises.forEach((exercise) => {
-    //workout.exercises.forEach((exercise) => {
         const input = document.createElement("input");
         input.type = "text";
         input.value = exercise;
         section.append(input);
     });
 };
-//new
 const addEditWorkout = async(e) => {
     e.preventDefault();
     const form = document.getElementById("add-edit-workout-form");
     const formData = new FormData(form);
     formData.delete("img");
-    //let response;
     formData.append("exercises", getExercises());
     let response;
-    //trying to add a new recipe
     if (form._id.value == -1) {
         formData.delete("_id");
 
@@ -131,7 +124,6 @@ const addEditWorkout = async(e) => {
             body: formData
         });
     }
-    //edit an existing recipe
     else {
 
         console.log(...formData);
@@ -142,12 +134,10 @@ const addEditWorkout = async(e) => {
         });
     }
 
-    //successfully got data from server
     if (response.status != 200) {
         console.log("Error posting data");
         return;
     }
-    //new
 
     workout = await response.json();
 
@@ -159,45 +149,6 @@ const addEditWorkout = async(e) => {
     resetForm();
     showWorkouts();
 };
-/*const addEditWorkout = async(e) => {
-    e.preventDefault();
-    const form = document.getElementById("add-edit-workout-form");
-    const formData = new FormData(form);
-    formData.append("exercises", getExercises());
-    let response;
-    if (form._id.value == -1) {
-        formData.delete("_id");
-        formData.delete("img");
-        console.log(...formData);
-        response = await fetch("/api/workouts", {
-            method: "POST",
-            body: formData,
-        });
-
-    }
-    if(response.status != 200) {
-        console.log("error contacting server");
-        return;
-    }
-    if (response.status === 200) {
-        const successMessage = document.createElement("div");
-        successMessage.textContent = "SUCCESSFUL!";
-        successMessage.style.color = "green";
-        document.querySelector("header").appendChild(successMessage);
-
-        setTimeout(() => {
-            successMessage.remove();
-        }, 5000);
-    } else {
-        console.log("error contacting server");
-    }
-
-    document.querySelector(".dialog").classList.add("transparent");
-    resetForm();
-    showWorkouts();
-
-
-};*/
 
 const getExercises = () => {
     const inputs = document.querySelectorAll("#exercise-boxes input");
