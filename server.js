@@ -107,13 +107,13 @@ app.post("/api/workouts", upload.single("img"), (req, res) => {
         exercises: req.body.exercises.split(","),
     };
     workouts.push(workout);
-    res.send(workout);
+    res.send(workouts);
 });
 
 app.put("/api/workouts/:id", upload.single("img"), (req, res) => {
     const id = parseInt(req.params.id);
 
-    const workout = workouts.find((r) => r._id === id);;
+    const workout = workouts.find((r) => r._id === id);
 
     const result = validateWorkout(req.body);
 
@@ -124,10 +124,10 @@ app.put("/api/workouts/:id", upload.single("img"), (req, res) => {
 
     workout.name = req.body.name;
     workout.description = req.body.description;
-    workout.ingredients = req.body.ingredients.split(",");
+    workout.exercises = req.body.exercises.split(",");
 
     if (req.file) {
-        recipe.img = "images/" + req.file.filename;
+        workout.img = "images/" + req.file.filename;
     }
 
     res.send(workout);

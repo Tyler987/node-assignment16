@@ -64,7 +64,7 @@ const displayDetails = (workout) => {
     eLink.onclick = (e) => {
         e.preventDefault();
         document.querySelector(".dialog").classList.remove("transparent");
-        document.getElementById("add-edit-title").innerHTML = "Edit workout";
+        document.getElementById("add-edit-title").innerHTML = "Edit Workout";
     };
 
     dLink.onclick = (e) => {
